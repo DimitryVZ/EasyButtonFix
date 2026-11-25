@@ -26,7 +26,8 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..\publish
-OutputBaseFilename={#AppName}-Setup-{#AppVersion}
+; Fester Name (ohne Version), damit der Link .../releases/latest/download/EasyButtonFix-Setup.exe immer funktioniert
+OutputBaseFilename={#AppName}-Setup
 SetupIconFile=..\src\EasyButtonFix\Assets\app.ico
 UninstallDisplayIcon={app}\{#AppExe}
 UninstallDisplayName={#AppName}

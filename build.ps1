@@ -1,6 +1,7 @@
 # Baut EasyButtonFix (Release) und erzeugt in .\publish:
-#   - EasyButtonFix-Setup-<Version>.exe   (Installer)
-#   - EasyButtonFix-<Version>-portable.zip (ohne Installation)
+#   - EasyButtonFix-Setup.exe     (Installer)
+#   - EasyButtonFix-portable.zip  (ohne Installation)
+# Die Namen sind absichtlich ohne Version: der Download-Button im README zeigt immer auf das neueste Release.
 # Aufruf:  powershell -ExecutionPolicy Bypass -File .\build.ps1
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
@@ -14,7 +15,8 @@ $version = (Get-Item "$bin\EasyButtonFix.exe").VersionInfo.ProductVersion
 New-Item -ItemType Directory -Force publish | Out-Null
 
 Write-Host "==> Portable ZIP" -ForegroundColor Cyan
-$zip = "publish\EasyButtonFix-$version-portable.zip"
+Get-ChildItem publish -File | Remove-Item   # alte Ausgaben weg
+$zip = "publish\EasyButtonFix-portable.zip"   # fester Name für den Download-Link im README
 if (Test-Path $zip) { Remove-Item $zip }
 # erst kopieren: so klappt es auch, wenn die App gerade läuft und ihre DLLs sperrt
 $stage = "obj\portable"
