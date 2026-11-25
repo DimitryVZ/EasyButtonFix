@@ -1,0 +1,14 @@
+﻿# Build-Ausgaben
+bin/
+obj/
+publish/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Alter Prototyp (ButtonFix) – nicht Teil des Projekts
+/ButtonFix.cs
+/ButtonFix.exe
+/build.bat

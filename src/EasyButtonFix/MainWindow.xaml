@@ -1,0 +1,253 @@
+<ui:FluentWindow x:Class="EasyButtonFix.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:core="clr-namespace:EasyButtonFix.Core"
+                 Title="EasyButtonFix"
+                 Width="880" Height="760" MinWidth="780" MinHeight="560"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round">
+
+    <Window.Resources>
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="2,28,0,10" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="EasyButtonFix" ShowMaximize="False">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/Assets/app.png" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="32,8,32,32">
+
+                <!-- ============ Status ============ -->
+                <Border Style="{StaticResource Panel}" Padding="28,24">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border x:Name="StatusBadge" Width="68" Height="68" CornerRadius="34" VerticalAlignment="Center">
+                            <ui:SymbolIcon x:Name="StatusIcon" Symbol="ShieldCheckmark24" FontSize="34" Foreground="White" />
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="20,0,20,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="StatusTitle" FontSize="26" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                            <TextBlock x:Name="StatusText" Margin="0,4,0,0" TextWrapping="Wrap" FontSize="13"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <StackPanel Margin="0,0,28,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="TotalText" FontSize="34" FontWeight="SemiBold" HorizontalAlignment="Right"
+                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                <TextBlock Text="{x:Static core:L.ClicksBlocked}" FontSize="12" HorizontalAlignment="Right"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                            <ui:ToggleSwitch x:Name="ActiveSwitch" VerticalAlignment="Center"
+                                             Checked="ActiveSwitch_Changed" Unchecked="ActiveSwitch_Changed" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ============ Tasten ============ -->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static core:L.Buttons}" />
+                <ItemsControl x:Name="ButtonList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type core:ButtonState}">
+                            <ui:CardControl Margin="0,0,0,6" Padding="18,14">
+                                <ui:CardControl.Icon>
+                                    <ui:SymbolIcon Symbol="{Binding Icon}" FontSize="22" />
+                                </ui:CardControl.Icon>
+                                <ui:CardControl.Header>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DisplayName}" FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                        <TextBlock Text="{Binding Subtitle}" FontSize="12" Margin="0,2,0,0"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    </StackPanel>
+                                </ui:CardControl.Header>
+
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ui:Button Content="{x:Static core:L.Calibrate}" Appearance="Secondary" Margin="0,0,20,0"
+                                               Click="Calibrate_Click" Tag="{Binding}" MinWidth="128"
+                                               ToolTip="{x:Static core:L.CalibrateTip}">
+                                        <ui:Button.Icon>
+                                            <ui:SymbolIcon Symbol="Wand24" />
+                                        </ui:Button.Icon>
+                                    </ui:Button>
+                                    <Slider Width="140" VerticalAlignment="Center"
+                                            Minimum="20" Maximum="300" TickFrequency="5" IsSnapToTickEnabled="True"
+                                            SmallChange="5" LargeChange="20"
+                                            Value="{Binding ThresholdMs, Mode=TwoWay}"
+                                            IsEnabled="{Binding Enabled}"
+                                            ToolTip="{x:Static core:L.SliderTip}" />
+                                    <TextBlock Width="58" Margin="10,0,18,0" VerticalAlignment="Center" TextAlignment="Right"
+                                               Text="{Binding ThresholdMs, StringFormat={}{0} ms}"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                    <ui:ToggleSwitch IsChecked="{Binding Enabled, Mode=TwoWay}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ui:CardControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- ============ Live ============ -->
+                <Grid>
+                    <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static core:L.LiveActivity}" />
+                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,2,10" FontSize="12"
+                               Text="{x:Static core:L.GapHint}"
+                               Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                </Grid>
+                <Border Style="{StaticResource Panel}" Padding="20,14" MinHeight="64">
+                    <Grid>
+                        <StackPanel x:Name="EmptyHint" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ui:SymbolIcon Symbol="Pulse24" FontSize="18" Margin="0,0,10,0"
+                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                            <TextBlock Text="{x:Static core:L.LiveEmpty}" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                        <ItemsControl x:Name="EventList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="22" />
+                                            <ColumnDefinition Width="170" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="90" />
+                                            <ColumnDefinition Width="110" />
+                                        </Grid.ColumnDefinitions>
+                                        <Ellipse Width="8" Height="8" Fill="{Binding Color}" HorizontalAlignment="Left" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Time}" VerticalAlignment="Center" FontSize="12"
+                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                        <TextBlock Grid.Column="3" Text="{Binding Gap}" VerticalAlignment="Center" TextAlignment="Right"
+                                                   FontFamily="Consolas" Margin="0,0,16,0"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                        <Border Grid.Column="4" CornerRadius="10" Padding="10,2" HorizontalAlignment="Right"
+                                                Background="{Binding PillBackground}">
+                                            <TextBlock Text="{Binding Status}" FontSize="12" FontWeight="SemiBold" Foreground="{Binding Color}" />
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+
+                <!-- ============ Einstellungen ============ -->
+                <TextBlock Style="{StaticResource SectionHeader}" Text="{x:Static core:L.SettingsHeader}" />
+                <ui:CardControl Margin="0,0,0,6" Padding="18,14">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Power24" FontSize="22" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static core:L.AutostartTitle}" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                            <TextBlock Text="{x:Static core:L.AutostartText}" FontSize="12" Margin="0,2,0,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch x:Name="AutostartSwitch" Checked="Autostart_Changed" Unchecked="Autostart_Changed" />
+                </ui:CardControl>
+                <ui:CardControl Margin="0,0,0,6" Padding="18,14">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="LocalLanguage24" FontSize="22" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static core:L.LanguageTitle}" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                            <TextBlock Text="{x:Static core:L.LanguageText}" FontSize="12" Margin="0,2,0,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ComboBox x:Name="LanguageBox" MinWidth="200" SelectionChanged="Language_Changed">
+                        <ComboBoxItem Tag="auto" Content="{x:Static core:L.LanguageAuto}" />
+                        <ComboBoxItem Tag="de" Content="Deutsch" />
+                        <ComboBoxItem Tag="en" Content="English" />
+                    </ComboBox>
+                </ui:CardControl>
+                <ui:CardControl Margin="0,0,0,6" Padding="18,14">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="ArrowReset24" FontSize="22" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static core:L.ResetTitle}" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                            <TextBlock Text="{x:Static core:L.ResetText}" FontSize="12" Margin="0,2,0,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:Button Content="{x:Static core:L.ResetButton}" Appearance="Secondary" Click="ResetStats_Click" />
+                </ui:CardControl>
+
+                <TextBlock x:Name="FooterText" Margin="2,20,0,0" FontSize="12" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ============ Kalibrierung (Overlay) ============ -->
+        <Grid x:Name="CalOverlay" Grid.Row="1" Visibility="Collapsed" Background="#A0000000">
+            <Border Width="460" Padding="30,28" CornerRadius="12" BorderThickness="1"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                <StackPanel>
+                    <ui:SymbolIcon Symbol="Wand24" FontSize="32" HorizontalAlignment="Left"
+                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                    <TextBlock x:Name="CalTitle" FontSize="20" FontWeight="SemiBold" Margin="0,12,0,6"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock x:Name="CalText" TextWrapping="Wrap" LineHeight="20"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                    <Grid Margin="0,22,0,8">
+                        <TextBlock x:Name="CalCount" FontSize="30" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                        <TextBlock x:Name="CalBounces" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,6"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    </Grid>
+                    <ProgressBar x:Name="CalProgress" Maximum="10" Height="4" />
+
+                    <Border x:Name="CalResultBox" Margin="0,18,0,0" Padding="14,10" CornerRadius="6" Visibility="Collapsed"
+                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                        <TextBlock x:Name="CalResult" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+                        <ui:Button x:Name="CalCancel" Margin="0,0,8,0" Click="CalCancel_Click" />
+                        <ui:Button x:Name="CalApply" Appearance="Primary" Visibility="Collapsed" Click="CalApply_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
